@@ -1,3 +1,15 @@
+:root {
+    --accent-a: #{$color-a};
+    --accent-b: #{$color-b};
+    --surface-strong: #{$color-text};
+    --surface-muted: #{rgba($color-text, 0.68)};
+    --surface-border: #{rgba($color-text, 0.2)};
+    --background-color: #{$color-bg};
+    --font-family: #{$font};
+    --glow-a: #{rgba($color-a, 0.35)};
+    --glow-b: #{rgba($color-b, 0.35)};
+}
+
 // Text
 .color-a {
     color: $color-a;
@@ -30,17 +42,13 @@
 }
 
 body {
-    color: $color-text;
-    background-color: $color-bg;
+    color: var(--surface-strong);
+    background-color: var(--background-color);
 }
 
 * {
-    font-family: $font;
+    font-family: var(--font-family);
 }
-
-/* #theme {
-    font-family: $font;
-} */
 
 a {
     color: $color-a;

@@ -11,10 +11,12 @@ export interface VoteCount {
 export interface VoteCandidatesData {
     condidateA: VoteData;
     condidateB: VoteData;
+    totalVotes: number;
 }
 
 export interface VoteData {
     command: string;
+    label: string;
     votes: number;
 }
 

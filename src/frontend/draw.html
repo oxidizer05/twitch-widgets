@@ -8,43 +8,39 @@
     <link rel="stylesheet" href="css/draw.min.css">
 </head>
 
-<body class="anim-fade-in hidden">
-    <main>
-        <div class="draw anim-opacity">
-            <div class="draw-block">
-                <p class="draw-text">УЧАСТВУЙТЕ В РОЗЫГРЫШЕ ПОДАРКОВ!</p>
-                <p>ИСПОЛЬЗУЙТЕ КОМАНДУ <span class="draw-command color-a">!draw</span> В ЧАТЕ TWITCH</p>
-            </div>
-            <div class="draw-block draw-block--center">
-                <svg height="32" width="32" viewBox="0 0 512 512" class="icon" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <circle cx="256" cy="119.631" r="87" />
-                        <circle cx="432" cy="151.63" r="55" />
-                        <circle cx="80" cy="151.63" r="55" />
-                        <path
-                            d="m134.19 256.021c-21.65-17.738-41.257-15.39-66.29-15.39-37.44 0-67.9 30.28-67.9 67.49v109.21c0 16.16 13.19 29.3 29.41 29.3 70.026 0 61.59 1.267 61.59-3.02 0-77.386-9.166-134.137 43.19-187.59z" />
-                        <path
-                            d="m279.81 241.03c-43.724-3.647-81.729.042-114.51 27.1-54.857 43.94-44.3 103.103-44.3 175.48 0 19.149 15.58 35.02 35.02 35.02 211.082 0 219.483 6.809 232-20.91 4.105-9.374 2.98-6.395 2.98-96.07 0-71.226-61.673-120.62-111.19-120.62z" />
-                        <path
-                            d="m444.1 240.63c-25.17 0-44.669-2.324-66.29 15.39 51.965 53.056 43.19 105.935 43.19 187.59 0 4.314-7.003 3.02 60.54 3.02 16.8 0 30.46-13.61 30.46-30.34v-108.17c0-37.21-30.46-67.49-67.9-67.49z" />
-                    </g>
-                </svg>
-                <p class="draw-voted draw-font">0</p>
-            </div>
-            <div class="draw-block draw-block--center">
-                <svg height="32" width="32" viewBox="0 0 511.478 511.478" class="icon"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M191.935 0v42.667h42.667V64c14.933-2.133 27.733-2.133 42.667 0V42.667h42.667V0H191.935z" />
-                    <path
-                        d="M401.002 140.8l14.933-14.933 17.067 17.067 29.867-29.867-64-64-29.867 29.867L386.069 96l-19.2 19.2c-102.4-61.867-234.667-29.867-294.4 72.533S44.735 418.133 145.002 480s232.533 29.867 292.267-72.533c53.333-87.467 38.4-198.4-36.267-266.667zM255.935 445.867c-83.2 0-149.333-66.133-149.333-149.333S172.735 147.2 255.935 147.2v149.333h149.333c.001 83.2-66.133 149.334-149.333 149.334z" />
-                </svg>
-                <p class="draw-countdown draw-font">00:00</p>
-            </div>
-        </div>
-        <div class="winner anim-opacity opacity-none hidden">
-            <p class="winner-text color-a">ПОБЕДИТЕЛЬ РОЗЫГРЫША:</p>
-            <p class="winner-name draw-font"></p>
-        </div>
+<body class="widget-body draw-body anim-fade-in hidden">
+    <main class="widget-shell">
+        <section class="widget widget--draw">
+            <header class="widget__header">
+                <div>
+                    <p class="widget__eyebrow">Розыгрыш сообщества</p>
+                    <h1 class="widget__title" data-role="headline">Подготовка к розыгрышу</h1>
+                </div>
+                <span class="widget__status" data-role="status">Подключаемся…</span>
+            </header>
+            <p class="widget__subtitle" data-role="description">Стример ещё не запустил розыгрыш. Следите за чатом, чтобы не пропустить старт!</p>
+            <section class="draw-stats">
+                <div class="draw-stat">
+                    <p class="draw-stat__label">Участников</p>
+                    <p class="draw-stat__value" data-role="count">0</p>
+                </div>
+                <div class="draw-stat">
+                    <p class="draw-stat__label">Осталось</p>
+                    <p class="draw-stat__value draw-stat__value--timer" data-role="timer">00:00</p>
+                </div>
+                <div class="draw-stat">
+                    <p class="draw-stat__label">Команда</p>
+                    <p class="draw-stat__value draw-stat__value--command color-a" data-role="command">!draw</p>
+                </div>
+            </section>
+            <section class="draw-winner hidden" data-role="winner">
+                <p class="draw-winner__label">Победитель</p>
+                <p class="draw-winner__name" data-role="winner-name"></p>
+            </section>
+            <footer class="widget__footer">
+                <p class="widget__footnote">Добавьте страницу в OBS как браузерный источник и отрегулируйте размер блока под дизайн трансляции.</p>
+            </footer>
+        </section>
     </main>
     <script src="js/theme.min.js"></script>
     <script src="js/draw.min.js"></script>

@@ -58,15 +58,19 @@ export default class VotePoll {
     }
     getData(): VoteCandidatesData {
         const votes = this.getVoteCount();
+        const totalVotes = votes.voteCountA + votes.voteCountB;
         return {
             condidateA: {
                 command: addCommandPrefix(this.name.condidateA),
+                label: this.name.condidateA,
                 votes: votes.voteCountA
             },
             condidateB: {
                 command: addCommandPrefix(this.name.condidateB),
+                label: this.name.condidateB,
                 votes: votes.voteCountB
-            }
+            },
+            totalVotes
         };
     }
     getWinnerMessage() {

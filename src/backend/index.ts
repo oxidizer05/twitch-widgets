@@ -1,5 +1,6 @@
 import express from "express";
 import fs from "fs";
+import http from "http";
 import path from "path";
 
 process.on("uncaughtException", (err) => {
@@ -9,6 +10,7 @@ process.on("uncaughtException", (err) => {
 import { log, logError } from "./src/helpers";
 import { vote, voteList, draw, say } from "./src/twitch";
 import { config } from "./src/pkg-config";
+import { initRealtimeServer, publishDrawWinner } from "./src/realtime";
 // TODO: fix build
 /* import pkg from "../../package.json";
 
@@ -60,6 +62,7 @@ app.get("/api/draw/winner", (req, res) => {
 
         const winner = draw.getRandomWinner();
         res.send(winner);
+        publishDrawWinner({ winner: winner ?? "", data: draw.getData() });
 
         if (winner && config.commands.draw.winnerMessage)
             say(config.twitch.login, `/w ${winner} ${config.commands.draw.winnerMessage}`, true);
@@ -68,7 +71,11 @@ app.get("/api/draw/winner", (req, res) => {
         res.status(503).send("The prize drawing is not started yet!");
 });
 
-app.listen(config.twitch.httpPort, () => {
+const server = http.createServer(app);
+
+initRealtimeServer(server);
+
+server.listen(config.twitch.httpPort, () => {
     log(`Local web server URL: http://localhost:${config.twitch.httpPort}`);
 });
 /*

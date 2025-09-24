@@ -4,10 +4,24 @@ import VotePoll from "./commands/vote";
 import Draw from "./commands/draw";
 import { removeCommandPrefix, log, logError } from "./helpers";
 import { config } from "./pkg-config";
+import {
+    publishDrawReset,
+    publishDrawUpdate,
+    publishVoteEnded,
+    publishVoteUpdate,
+    registerSnapshotProvider
+} from "./realtime";
 
 export let vote: VotePoll | undefined;
 export let voteList: string | undefined;
 export let draw: Draw | undefined;
+
+registerSnapshotProvider(() => ({
+    vote: vote ? vote.getData() : undefined,
+    draw: draw ? draw.getData() : undefined,
+    isVoteActive: Boolean(vote),
+    isDrawActive: Boolean(draw)
+}));
 
 enum AccessFlags {
     User,
@@ -71,7 +85,10 @@ client.on("message", (channel, userState, message, self) => {
         case config.commands.vote.name: {
             if (vote) {
                 log("The vote has ended");
-                say(channel, "/me " + vote.getWinnerMessage());
+                const result = vote.getData();
+                const winnerMessage = vote.getWinnerMessage();
+                say(channel, "/me " + winnerMessage);
+                publishVoteEnded({ winnerMessage, data: result });
                 voteList = vote.getHtmlVotelistPage();
                 vote = undefined;
                 return;
@@ -84,12 +101,15 @@ client.on("message", (channel, userState, message, self) => {
                 vote = new VotePoll(args);
                 say(channel, `@${username} ` + vote.getStartMessage());
                 log(`Voting progress bar is available at: http://localhost:${config.twitch.httpPort}/vote.html`);
+                publishVoteUpdate(vote.getData());
             }
             break;
         }
         case config.commands.draw.name: {
-            if (draw && draw.add(username))
+            if (draw && draw.add(username)) {
+                publishDrawUpdate(draw.getData());
                 return;
+            }
 
             if (!access)
                 return;
@@ -102,6 +122,7 @@ client.on("message", (channel, userState, message, self) => {
                 draw = new Draw(args);
                 say(channel, `@${username} ` + draw.getStartMessage());
                 log(`Prize drawing status is available at: http://localhost:${config.twitch.httpPort}/draw.html`);
+                publishDrawUpdate(draw.getData());
             }
             break;
         }
@@ -110,6 +131,7 @@ client.on("message", (channel, userState, message, self) => {
                 log("The draw has started!");
                 draw.start();
                 say(channel, "/me " + draw.getStartedMessage());
+                publishDrawUpdate(draw.getData());
                 return;
             }
             break;
@@ -117,6 +139,7 @@ client.on("message", (channel, userState, message, self) => {
         case config.commands.drawstop.name: {
             if (draw) {
                 log("The draw has stopped!");
+                publishDrawReset();
                 draw = undefined;
                 return;
             }
@@ -126,11 +149,13 @@ client.on("message", (channel, userState, message, self) => {
             if (vote) {
                 switch (command) {
                     case vote.name.condidateA: {
-                        vote.vote(username, vote.name.condidateA);
+                        if (vote.vote(username, vote.name.condidateA))
+                            publishVoteUpdate(vote.getData());
                         break;
                     }
                     case vote.name.condidateB: {
-                        vote.vote(username, vote.name.condidateB);
+                        if (vote.vote(username, vote.name.condidateB))
+                            publishVoteUpdate(vote.getData());
                         break;
                     }
                     default: {

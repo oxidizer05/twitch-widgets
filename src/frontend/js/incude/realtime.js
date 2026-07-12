@@ -3,6 +3,7 @@ const RECONNECT_TIMEOUT = 3000;
 function createRealtimeClient(handlers = {}) {
     let socket;
     let reconnectTimer;
+    let shouldReconnect = true;
 
     const connect = () => {
         const protocol = window.location.protocol === "https:" ? "wss" : "ws";
@@ -39,7 +40,8 @@ function createRealtimeClient(handlers = {}) {
         socket.addEventListener("close", () => {
             if (typeof handlers.close === "function")
                 handlers.close();
-            scheduleReconnect();
+            if (shouldReconnect)
+                scheduleReconnect();
         });
 
         socket.addEventListener("error", () => {
@@ -56,8 +58,9 @@ function createRealtimeClient(handlers = {}) {
 
     return {
         disconnect() {
+            shouldReconnect = false;
             clearTimeout(reconnectTimer);
-            if (socket && socket.readyState === WebSocket.OPEN)
+            if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING))
                 socket.close();
         }
     };

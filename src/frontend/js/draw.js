@@ -110,7 +110,7 @@ function renderIdle() {
 function statusFromData(data) {
     if (!data)
         return "Ожидаем запуск";
-    if (data.lastWinner || (!isAwaitingWinner && data.endTimestamp && timestamp() >= data.endTimestamp))
+    if (data.winnerSelected || (!isAwaitingWinner && data.endTimestamp && timestamp() >= data.endTimestamp))
         return "Розыгрыш завершён";
     if (isAwaitingWinner)
         return "Определяем победителя…";
@@ -128,7 +128,7 @@ function applyDrawData(data) {
 
     if (data.endTimestamp > timestamp())
         startCountdown(data.endTimestamp);
-    else if (data.endTimestamp && !data.lastWinner) {
+    else if (data.endTimestamp && !data.winnerSelected) {
         stopCountdown();
         updateTimer(0);
         if (!isAwaitingWinner)
@@ -139,12 +139,12 @@ function applyDrawData(data) {
         updateTimer(data.countdownSeconds);
     }
 
-    if (data.lastWinner)
-        showWinner(data.lastWinner);
+    if (data.winnerSelected)
+        showWinner(data.lastWinner || "Участников не было");
     else
         hideWinner();
 
-    if (data.lastWinner)
+    if (data.winnerSelected)
         isAwaitingWinner = false;
 
     setStatus(statusFromData(data));

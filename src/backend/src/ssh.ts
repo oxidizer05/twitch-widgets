@@ -11,7 +11,7 @@ const CONNECTED_MESSAGE = "tunneled with tls termination";
 
 export function processSsh() {
     if (!fs.existsSync(SSH_KEY_PATH)) {
-        const workerProcess = child_process.exec(`ssh-keygen -t rsa -b 4096 -N "" -f "${SSH_KEY_PATH}"`, (error, stdout, stderr) => {
+        const workerProcess = child_process.exec(`ssh-keygen -t rsa -b 4096 -N "" -f "${SSH_KEY_PATH}"`, (error) => {
             if (error) {
                 logError(error.stack);
                 logError("Error code: " + error.code);

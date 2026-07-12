@@ -4,7 +4,7 @@ import WebSocket, { Server as WebSocketServer } from "ws";
 import { log, logError } from "./helpers";
 import { DrawData, VoteCandidatesData } from "./types";
 
-type MessagePayload = Record<string, unknown> | undefined;
+type MessagePayload = unknown;
 
 type BroadcastMessage = {
     type: string;

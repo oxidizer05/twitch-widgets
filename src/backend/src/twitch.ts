@@ -62,11 +62,11 @@ client.on("message", (channel, userState, message, self) => {
     if (!message.startsWith(config.commands.prefix) || message.length > MESSAGE_MAX_CHARS)
         return;
 
-    let args = removeCommandPrefix(message.trim()).match(REGEX_COMMAND_LINE);
-    if (!args)
+    const matches = removeCommandPrefix(message.trim()).match(REGEX_COMMAND_LINE);
+    if (!matches)
         return;
 
-    args = args.map(s => s.replace(REGEX_QUOTES, ""));
+    const args = matches.map(s => s.replace(REGEX_QUOTES, ""));
     const command = args.shift();
 
     if (!command)
@@ -79,7 +79,7 @@ client.on("message", (channel, userState, message, self) => {
         return;
     }
 
-    log(`user: ${username}, command: ${command}, args: ${args}`);
+    log(`user: ${username}, command: ${command}, args: ${args.join(", ")}`);
 
     switch (command) {
         case config.commands.vote.name: {
@@ -170,10 +170,15 @@ client.on("message", (channel, userState, message, self) => {
 });
 
 function hasAccess(userState: tmi.ChatUserstate, username: string, command: string) {
-    // @ts-ignore
-    if (config.commands[command] && config.commands[command].accessFlag)
-        // @ts-ignore
-        return (config.commands[command].accessFlag & AccessFlags.Mod) && (userState.mod || userState["user-type"] === "mod") || username.toLowerCase() === config.twitch.login.toLowerCase();
+    const commandConfig = [
+        config.commands.vote,
+        config.commands.draw,
+        config.commands.drawstart,
+        config.commands.drawstop
+    ].find(item => item.name === command);
+
+    if (commandConfig?.accessFlag)
+        return Boolean((commandConfig.accessFlag & AccessFlags.Mod) && (userState.mod || userState["user-type"] === "mod") || username.toLowerCase() === config.twitch.login.toLowerCase());
     return true;
 }
 

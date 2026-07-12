@@ -27,6 +27,7 @@ export interface DrawData {
     command: string;
     endTimestamp: number;
     lastWinner: string;
+    winnerSelected: boolean;
 }
 
 // Config

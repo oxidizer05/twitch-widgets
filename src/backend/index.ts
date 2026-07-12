@@ -60,12 +60,21 @@ app.get("/api/draw/winner", (req, res) => {
     if (draw) {
         res.setHeader("Access-Control-Allow-Origin", "*");
 
-        const winner = draw.getRandomWinner();
-        res.send(winner);
-        publishDrawWinner({ winner: winner ?? "", data: draw.getData() });
+        if (!draw.canSelectWinner()) {
+            res.status(409).send("The prize drawing is still active!");
+            return;
+        }
 
-        if (winner && config.commands.draw.winnerMessage)
-            say(config.twitch.login, `/w ${winner} ${config.commands.draw.winnerMessage}`, true);
+        const winnerWasSelected = draw.hasSelectedWinner();
+        const winner = draw.getRandomWinner();
+        res.send(winner ?? "");
+
+        if (!winnerWasSelected) {
+            publishDrawWinner({ winner: winner ?? "", data: draw.getData() });
+
+            if (winner && config.commands.draw.winnerMessage)
+                say(config.twitch.login, `/w ${winner} ${config.commands.draw.winnerMessage}`, true);
+        }
     }
     else
         res.status(503).send("The prize drawing is not started yet!");

@@ -1,7 +1,6 @@
 const gulp = require("gulp");
 const rimraf = require("rimraf"); // для удаления файлов/папок
-let sass = require("gulp-sass");
-sass.compiler = require("node-sass");
+const sass = require("gulp-sass")(require("sass"));
 const browserSync = require("browser-sync").create();
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer"); // автоматически добавляет вендорные префиксы к CSS свойствам (req .browserslistrc)
@@ -156,7 +155,10 @@ function cssCallback(config) {
         plugins.push(uncss({
             html: [cfg.gulp.src.html + "/*.html"],
             ignore: config.uncssIgnore,
-            ignoreJs: []
+            ignoreJs: [],
+            jsdom: {
+                runScripts: "outside-only"
+            }
         }));
 
     if (cfg.gulp.css.autoprefixer.enable)

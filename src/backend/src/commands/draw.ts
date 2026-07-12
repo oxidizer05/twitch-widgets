@@ -4,11 +4,8 @@ import { log } from "../helpers";
 import { config } from "../pkg-config";
 
 const COMMAND_DRAW = config.commands.prefix + config.commands.draw.name;
-const COMMAND_START = config.commands.prefix + config.commands.drawstart.name;
-const COMMAND_STOP = config.commands.prefix + config.commands.drawstop.name;
 const MESSAGE_DRAW = `Для настройки розыгрыша напишите ${COMMAND_DRAW} {ВРЕМЯ_В_МИНУТАХ} {ТЕКСТ}. Например: ${COMMAND_DRAW} 5 "УЧАСТВУЙТЕ В РОЗЫГРЫШЕ КРЕДИТОВ!"`;
 const MESSAGE_STARTED = `Розыгрыш начался! Принимайте участие с помощью команды ${COMMAND_DRAW} в чат`;
-const MESSAGE_START = `Для запуска розыгрыша напишите ${COMMAND_START}, а для отмены ${COMMAND_STOP}`;
 
 export default class Draw {
     private countdownSeconds: number;
@@ -48,8 +45,9 @@ export default class Draw {
     }
     start() {
         if (this.endTimestamp)
-            return;
+            return false;
         this.endTimestamp = timestamp() + this.countdownSeconds;
+        return true;
     }
     hasEnded() {
         return timestamp() > this.endTimestamp;
@@ -84,8 +82,5 @@ export default class Draw {
     }
     getStartedMessage() {
         return MESSAGE_STARTED;
-    }
-    getStartMessage() {
-        return MESSAGE_START;
     }
 }

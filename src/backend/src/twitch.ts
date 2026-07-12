@@ -120,16 +120,16 @@ client.on("message", (channel, userState, message, self) => {
                 say(channel, `@${username} ` + errorMessage);
             else {
                 draw = new Draw(args);
-                say(channel, `@${username} ` + draw.getStartMessage());
+                draw.start();
+                say(channel, "/me " + draw.getStartedMessage());
                 log(`Prize drawing status is available at: http://localhost:${config.twitch.httpPort}/draw.html`);
                 publishDrawUpdate(draw.getData());
             }
             break;
         }
         case config.commands.drawstart.name: {
-            if (draw) {
+            if (draw?.start()) {
                 log("The draw has started!");
-                draw.start();
                 say(channel, "/me " + draw.getStartedMessage());
                 publishDrawUpdate(draw.getData());
                 return;

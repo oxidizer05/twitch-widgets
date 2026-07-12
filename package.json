@@ -127,6 +127,9 @@
         "ext": "ts"
     },
     "license": "GPL-3.0",
+    "engines": {
+        "node": ">=20 <25"
+    },
     "devDependencies": {
         "@raz1el/uncss": "^0.17.6",
         "@types/express": "^4.17.9",

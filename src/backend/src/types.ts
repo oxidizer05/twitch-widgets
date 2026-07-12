@@ -55,8 +55,8 @@ export interface Commands {
 
 export interface Command {
     name: string;
-    admin: boolean;
-    winnerMessage: string | undefined;
+    admin?: boolean;
+    winnerMessage?: string;
     accessFlag: number;
 }
 

@@ -9,7 +9,7 @@ process.on("uncaughtException", (err) => {
 
 import { log, logError } from "./src/helpers";
 import { vote, voteList, draw, say } from "./src/twitch";
-import { config } from "./src/pkg-config";
+import { config, isRailway } from "./src/pkg-config";
 import { initRealtimeServer, publishDrawWinner } from "./src/realtime";
 // TODO: fix build
 /* import pkg from "../../package.json";
@@ -24,6 +24,13 @@ const app = express();
 const PATH = path.join(__dirname, "..", "frontend");
 
 app.use(express.static(PATH));
+
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        uptime: process.uptime()
+    });
+});
 
 app.get("/vote/list", (req, res) => {
     if (vote) {
@@ -84,8 +91,12 @@ const server = http.createServer(app);
 
 initRealtimeServer(server);
 
-server.listen(config.twitch.httpPort, () => {
-    log(`Local web server URL: http://localhost:${config.twitch.httpPort}`);
+server.listen(config.twitch.httpPort, "0.0.0.0", () => {
+    const publicDomain = process.env.RAILWAY_PUBLIC_DOMAIN;
+    if (publicDomain)
+        log(`Public web server URL: https://${publicDomain}`);
+    else
+        log(`Local web server URL: http://localhost:${config.twitch.httpPort}`);
 });
 /*
 |==========================================================================
@@ -95,12 +106,12 @@ server.listen(config.twitch.httpPort, () => {
 import ngrok from "@raz1el/ngrok";
 import { processSsh } from "./src/ssh";
 
-if (config.ngrok.enable) {
+if (!isRailway && config.ngrok.enable) {
     config.ngrok.addr = config.twitch.httpPort;
     ngrok.connect(config.ngrok).then(url => { log("Public web server URL: " + url) }).catch(logError);
 }
-else if (config.sshForward.enable)
+else if (!isRailway && config.sshForward.enable)
     processSsh();
-else
+else if (!isRailway)
     log("Public web server URL: disabled");
 

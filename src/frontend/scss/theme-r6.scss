@@ -1,12 +1,21 @@
 // Theme id 1
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
-$color-a: #ce61df;
-$color-b: black;
-$color-text:black;
-$color-bg: white;
+$color-a: #facc15;
+$color-b: #111827;
+$color-text: #111827;
+$color-bg: transparent;
 $font: 'Montserrat',
 sans-serif;
-$color-icon: #ce61df;
+$color-icon: #111827;
 
 @import "include/theme-base.scss";
+
+:root {
+    --surface-bg: rgba(255, 255, 255, 0.9);
+    --surface-border: rgba(15, 23, 42, 0.08);
+    --surface-muted: rgba(71, 85, 105, 0.75);
+    --surface-strong: #111827;
+    --surface-shadow: 0 22px 50px rgba(15, 23, 42, 0.18);
+    --page-background: radial-gradient(circle at top, rgba(250, 204, 21, 0.22), rgba(255, 255, 255, 0.95));
+}

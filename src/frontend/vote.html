@@ -8,25 +8,53 @@
     <link rel="stylesheet" href="css/vote.min.css">
 </head>
 
-<body class="anim-fade-in hidden">
-    <main>
-        <div class="information">
-            <div class="data">
-                <p class="text-user-a">0%</p>
-                <div class="space"></div>
-                <p class="command-user-a">!A</p>
-            </div>
-            <p>ГОЛОСУЙ В ЧАТ TWITCH!</p>
-            <div class="data">
-                <p class="command-user-b">!B</p>
-                <div class="space"></div>
-                <p class="text-user-b">0%</p>
-            </div>
-        </div>
-        <div class='progressBar'>
-            <div class='bar-user-a color-bg-a anim-width'></div>
-            <div class='bar-user-b color-bg-b anim-width'></div>
-        </div>
+<body class="widget-body vote-body anim-fade-in hidden">
+    <main class="widget-shell">
+        <section class="widget widget--vote">
+            <header class="widget__header">
+                <div>
+                    <p class="widget__eyebrow">Голосование чата</p>
+                    <h1 class="widget__title" data-role="headline">Ожидаем команду !vote</h1>
+                </div>
+                <span class="widget__status" data-role="status">Подключаемся…</span>
+            </header>
+            <p class="widget__subtitle">Ведущий запускает голосование, а зрители выбирают победителя при помощи команд чата Twitch.</p>
+            <section class="vote-meta">
+                <p class="vote-meta__total" data-role="total">0 голосов</p>
+                <p class="vote-meta__winner" data-role="winner-message"></p>
+            </section>
+            <section class="vote-options">
+                <article class="vote-option" data-option="a">
+                    <header class="vote-option__header">
+                        <span class="vote-option__label" data-role="label">Участник A</span>
+                        <span class="vote-option__command color-a" data-role="command">!A</span>
+                    </header>
+                    <div class="vote-option__progress">
+                        <div class="vote-option__progress-fill color-bg-a" data-role="bar"></div>
+                    </div>
+                    <footer class="vote-option__footer">
+                        <span class="vote-option__percent" data-role="percent">0%</span>
+                        <span class="vote-option__count" data-role="count">0</span>
+                    </footer>
+                </article>
+                <article class="vote-option" data-option="b">
+                    <header class="vote-option__header">
+                        <span class="vote-option__label" data-role="label">Участник B</span>
+                        <span class="vote-option__command color-b" data-role="command">!B</span>
+                    </header>
+                    <div class="vote-option__progress">
+                        <div class="vote-option__progress-fill color-bg-b" data-role="bar"></div>
+                    </div>
+                    <footer class="vote-option__footer">
+                        <span class="vote-option__percent" data-role="percent">0%</span>
+                        <span class="vote-option__count" data-role="count">0</span>
+                    </footer>
+                </article>
+            </section>
+            <footer class="widget__footer">
+                <p class="widget__footnote">Поделитесь виджетом в OBS и укажите прозрачный фон для интеграции в трансляцию.</p>
+            </footer>
+        </section>
     </main>
     <script src="js/theme.min.js"></script>
     <script src="js/vote.min.js"></script>

@@ -1,30 +1,102 @@
 @import "include/common.scss";
 
-.draw {
-    display: flex;
-    justify-content: space-between;
+.draw-body {
+    --page-background: radial-gradient(circle at top, rgba(14, 165, 233, 0.35), rgba(15, 23, 42, 0.95));
 }
 
-.draw-block {
+.widget--draw {
+    position: relative;
+    overflow: hidden;
+}
+
+.widget--draw::before {
+    content: "";
+    position: absolute;
+    inset: -20% 0 auto 45%;
+    height: 55%;
+    background: radial-gradient(circle, var(--glow-b), transparent 60%);
+    pointer-events: none;
+    filter: blur(8px);
+}
+
+.widget--draw::after {
+    content: "";
+    position: absolute;
+    inset: auto 55% -40% -10%;
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    background: radial-gradient(circle, var(--glow-a), transparent 60%);
+    pointer-events: none;
+    filter: blur(4px);
+}
+
+.widget--draw > * {
+    position: relative;
+    z-index: 1;
+}
+
+.draw-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: clamp(12px, 2vw, 20px);
+}
+
+.draw-stat {
+    padding: clamp(14px, 2vw, 18px);
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.15);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    max-width: 536px;
+    gap: 8px;
 }
 
-.draw-block--center {
-    align-items: center;
+.draw-stat__label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--surface-muted);
 }
 
-.draw-text {
+.draw-stat__value {
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 700;
+}
+
+.draw-stat__value--timer {
+    font-variant-numeric: tabular-nums;
+}
+
+.draw-stat__value--command {
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+}
+
+.draw-winner {
+    padding: clamp(16px, 2vw, 22px);
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: center;
+}
+
+.draw-winner__label {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--surface-muted);
+    margin-bottom: 8px;
+}
+
+.draw-winner__name {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
     text-transform: uppercase;
 }
 
-.draw-font {
-    font-weight: bold;
-    font-size: 1.8em;
-}
-
-.winner-name {
-    text-transform: uppercase;
+@media (max-width: 600px) {
+    .draw-stat__value {
+        font-size: 1.6rem;
+    }
 }

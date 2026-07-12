@@ -16,6 +16,7 @@ export default class Draw {
     private text: string;
     private users: Set<string>;
     private lastWinner: string;
+    private winnerSelected: boolean;
 
     static isInvalidParams(args: string[]) {
         if (!args.length || args.length !== 2)
@@ -32,6 +33,7 @@ export default class Draw {
         this.users = new Set<string>();
         this.endTimestamp = 0;
         this.lastWinner = "";
+        this.winnerSelected = false;
     }
     add(user: string) {
         if (!this.endTimestamp || this.hasEnded()) {
@@ -52,12 +54,22 @@ export default class Draw {
     hasEnded() {
         return timestamp() > this.endTimestamp;
     }
+    canSelectWinner() {
+        return this.endTimestamp > 0 && this.hasEnded();
+    }
     getRandomWinner() {
+        if (this.winnerSelected)
+            return this.lastWinner || undefined;
+
+        this.winnerSelected = true;
         if (this.users.size > 0) {
             const array = [...this.users];
             this.lastWinner = array[getRandomInt(0, array.length)];
             return this.lastWinner;
         }
+    }
+    hasSelectedWinner() {
+        return this.winnerSelected;
     }
     getData(): DrawData {
         return {
@@ -66,7 +78,8 @@ export default class Draw {
             userCount: this.users.size,
             command: COMMAND_DRAW,
             endTimestamp: this.endTimestamp,
-            lastWinner: this.lastWinner
+            lastWinner: this.lastWinner,
+            winnerSelected: this.winnerSelected
         };
     }
     getStartedMessage() {

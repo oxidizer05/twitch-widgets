@@ -1,12 +1,20 @@
 // Theme id 0
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-$color-a: #E94957;
-$color-b: #5590B4;
-$color-text:black;
-$color-bg: white;
+$color-a: #7c3aed;
+$color-b: #22d3ee;
+$color-text: #f8fafc;
+$color-bg: transparent;
 $font: 'Roboto',
 sans-serif;
-$color-icon: black;
+$color-icon: #f8fafc;
 
 @import "include/theme-base.scss";
+
+:root {
+    --surface-bg: rgba(17, 24, 39, 0.82);
+    --surface-border: rgba(124, 58, 237, 0.28);
+    --surface-muted: rgba(226, 232, 240, 0.7);
+    --surface-shadow: 0 30px 70px rgba(15, 23, 42, 0.45);
+    --page-background: radial-gradient(circle at top, rgba(124, 58, 237, 0.35), rgba(12, 17, 29, 0.95));
+}

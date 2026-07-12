@@ -11,10 +11,12 @@ export interface VoteCount {
 export interface VoteCandidatesData {
     condidateA: VoteData;
     condidateB: VoteData;
+    totalVotes: number;
 }
 
 export interface VoteData {
     command: string;
+    label: string;
     votes: number;
 }
 
@@ -25,6 +27,7 @@ export interface DrawData {
     command: string;
     endTimestamp: number;
     lastWinner: string;
+    winnerSelected: boolean;
 }
 
 // Config
@@ -52,8 +55,8 @@ export interface Commands {
 
 export interface Command {
     name: string;
-    admin: boolean;
-    winnerMessage: string | undefined;
+    admin?: boolean;
+    winnerMessage?: string;
     accessFlag: number;
 }
 

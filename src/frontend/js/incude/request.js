@@ -15,7 +15,7 @@ module.exports = (path, callback) => {
         } catch {
             try {
                 httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch { }
+            } catch {}
         }
     }
 

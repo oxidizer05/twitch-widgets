@@ -4,10 +4,24 @@ import VotePoll from "./commands/vote";
 import Draw from "./commands/draw";
 import { removeCommandPrefix, log, logError } from "./helpers";
 import { config } from "./pkg-config";
+import {
+    publishDrawReset,
+    publishDrawUpdate,
+    publishVoteEnded,
+    publishVoteUpdate,
+    registerSnapshotProvider
+} from "./realtime";
 
 export let vote: VotePoll | undefined;
 export let voteList: string | undefined;
 export let draw: Draw | undefined;
+
+registerSnapshotProvider(() => ({
+    vote: vote ? vote.getData() : undefined,
+    draw: draw ? draw.getData() : undefined,
+    isVoteActive: Boolean(vote),
+    isDrawActive: Boolean(draw)
+}));
 
 enum AccessFlags {
     User,
@@ -48,11 +62,11 @@ client.on("message", (channel, userState, message, self) => {
     if (!message.startsWith(config.commands.prefix) || message.length > MESSAGE_MAX_CHARS)
         return;
 
-    let args = removeCommandPrefix(message.trim()).match(REGEX_COMMAND_LINE);
-    if (!args)
+    const matches = removeCommandPrefix(message.trim()).match(REGEX_COMMAND_LINE);
+    if (!matches)
         return;
 
-    args = args.map(s => s.replace(REGEX_QUOTES, ""));
+    const args = matches.map(s => s.replace(REGEX_QUOTES, ""));
     const command = args.shift();
 
     if (!command)
@@ -65,13 +79,16 @@ client.on("message", (channel, userState, message, self) => {
         return;
     }
 
-    log(`user: ${username}, command: ${command}, args: ${args}`);
+    log(`user: ${username}, command: ${command}, args: ${args.join(", ")}`);
 
     switch (command) {
         case config.commands.vote.name: {
             if (vote) {
                 log("The vote has ended");
-                say(channel, "/me " + vote.getWinnerMessage());
+                const result = vote.getData();
+                const winnerMessage = vote.getWinnerMessage();
+                say(channel, "/me " + winnerMessage);
+                publishVoteEnded({ winnerMessage, data: result });
                 voteList = vote.getHtmlVotelistPage();
                 vote = undefined;
                 return;
@@ -84,12 +101,15 @@ client.on("message", (channel, userState, message, self) => {
                 vote = new VotePoll(args);
                 say(channel, `@${username} ` + vote.getStartMessage());
                 log(`Voting progress bar is available at: http://localhost:${config.twitch.httpPort}/vote.html`);
+                publishVoteUpdate(vote.getData());
             }
             break;
         }
         case config.commands.draw.name: {
-            if (draw && draw.add(username))
+            if (draw && draw.add(username)) {
+                publishDrawUpdate(draw.getData());
                 return;
+            }
 
             if (!access)
                 return;
@@ -102,6 +122,7 @@ client.on("message", (channel, userState, message, self) => {
                 draw = new Draw(args);
                 say(channel, `@${username} ` + draw.getStartMessage());
                 log(`Prize drawing status is available at: http://localhost:${config.twitch.httpPort}/draw.html`);
+                publishDrawUpdate(draw.getData());
             }
             break;
         }
@@ -110,6 +131,7 @@ client.on("message", (channel, userState, message, self) => {
                 log("The draw has started!");
                 draw.start();
                 say(channel, "/me " + draw.getStartedMessage());
+                publishDrawUpdate(draw.getData());
                 return;
             }
             break;
@@ -117,6 +139,7 @@ client.on("message", (channel, userState, message, self) => {
         case config.commands.drawstop.name: {
             if (draw) {
                 log("The draw has stopped!");
+                publishDrawReset();
                 draw = undefined;
                 return;
             }
@@ -126,11 +149,13 @@ client.on("message", (channel, userState, message, self) => {
             if (vote) {
                 switch (command) {
                     case vote.name.condidateA: {
-                        vote.vote(username, vote.name.condidateA);
+                        if (vote.vote(username, vote.name.condidateA))
+                            publishVoteUpdate(vote.getData());
                         break;
                     }
                     case vote.name.condidateB: {
-                        vote.vote(username, vote.name.condidateB);
+                        if (vote.vote(username, vote.name.condidateB))
+                            publishVoteUpdate(vote.getData());
                         break;
                     }
                     default: {
@@ -145,10 +170,15 @@ client.on("message", (channel, userState, message, self) => {
 });
 
 function hasAccess(userState: tmi.ChatUserstate, username: string, command: string) {
-    // @ts-ignore
-    if (config.commands[command] && config.commands[command].accessFlag)
-        // @ts-ignore
-        return (config.commands[command].accessFlag & AccessFlags.Mod) && (userState.mod || userState["user-type"] === "mod") || username.toLowerCase() === config.twitch.login.toLowerCase();
+    const commandConfig = [
+        config.commands.vote,
+        config.commands.draw,
+        config.commands.drawstart,
+        config.commands.drawstop
+    ].find(item => item.name === command);
+
+    if (commandConfig?.accessFlag)
+        return Boolean((commandConfig.accessFlag & AccessFlags.Mod) && (userState.mod || userState["user-type"] === "mod") || username.toLowerCase() === config.twitch.login.toLowerCase());
     return true;
 }
 
